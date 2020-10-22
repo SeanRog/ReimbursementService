@@ -21,7 +21,7 @@ public class HibernateUtil {
 
             configuration.configure("hibernate.cfg.xml");
 
-            configuration.addAnnotatedClass(ErsReimbursements.class);
+            configuration.addAnnotatedClass(ErsReimbursement.class);
             configuration.addAnnotatedClass(ErsReimbursementStatus.class);
             configuration.addAnnotatedClass(ErsReimbursementType.class);
             configuration.addAnnotatedClass(ErsUser.class);
