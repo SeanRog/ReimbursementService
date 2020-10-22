@@ -20,7 +20,7 @@ public class ErsReimbursements {
     @Column(name = "submitted")
     private String submitted;
 
-    @Column(name="resolved")
+    @Column(name = "resolved")
     private String resolved;
 
     @Column(name = "description")
@@ -29,16 +29,20 @@ public class ErsReimbursements {
     @Column(name = "reciept")
     private double receipt;
 
-    @Column(name = "author_id")
-    private long authorId;
+    @OneToOne
+    @JoinColumn(name = "author_id")
+    private ErsUser author;
 
-    @Column(name = "resolver_id")
-    private long resolverId;
+    @OneToOne
+    @JoinColumn(name = "resolver_id")
+    private ErsUser resolver;
 
-    @Column(name = "reimb_status_id")
-    private int reimbStatusId;
+    @OneToOne
+    @JoinColumn(name = "reimb_status_id")
+    private ErsReimbursementStatus status;
 
-    @Column(name = "reimb_type_id")
-    private int reimbTypeId;
+    @OneToOne
+    @JoinColumn(name = "reimb_type_id")
+    private ErsReimbursementType type;
 
 }

@@ -29,8 +29,9 @@ public class ErsUser {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "user_role_id")
-    private int userRoleId;
+    @OneToOne
+    @JoinColumn(name = "user_role_id")
+    private ErsUserRole userRole;
 
     @Column(name = "is_active")
     private boolean isActive;
