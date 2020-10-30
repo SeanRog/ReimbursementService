@@ -56,4 +56,9 @@ public class JwtAuthenticationController {
         }
     }
 
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    public String registerUser() {
+        return "Register not implemented yet :)";
+    }
+
 }
