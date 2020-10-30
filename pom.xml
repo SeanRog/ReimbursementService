@@ -38,7 +38,7 @@
             <artifactId>h2</artifactId>
             <version>1.4.193</version>
         </dependency>
-cx
+
 <!--        <dependency>-->
 <!--            <groupId>org.postgresql</groupId>-->
 <!--            <artifactId>postgresql</artifactId>-->
