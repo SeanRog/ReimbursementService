@@ -30,7 +30,7 @@ public class ErsUser {
     private String email;
 
     @OneToOne
-    @JoinColumn(name = "user_role_id")
+    @JoinColumn(name = "role_id")
     private ErsUserRole userRole;
 
     @Column(name = "is_active")
