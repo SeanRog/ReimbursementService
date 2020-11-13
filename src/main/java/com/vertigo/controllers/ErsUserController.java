@@ -27,9 +27,6 @@ import java.util.List;
 public class ErsUserController {
 
     private ErsUserService ersUserService;
-    private AuthenticationManager authenticationManager;
-    private JwtTokenUtil jwtTokenUtil;
-    private JwtUserDetailsService userDetailsService;
 
     public ErsUserController(ErsUserService ersUserService,
                              AuthenticationManager authenticationManager,
@@ -37,9 +34,6 @@ public class ErsUserController {
                              JwtUserDetailsService userDetailsService) {
 
         this.ersUserService = ersUserService;
-        this.authenticationManager = authenticationManager;
-        this.jwtTokenUtil = jwtTokenUtil;
-        this.userDetailsService = userDetailsService;
 
     }
 
