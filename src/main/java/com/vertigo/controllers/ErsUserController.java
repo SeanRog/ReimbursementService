@@ -28,10 +28,7 @@ public class ErsUserController {
 
     private ErsUserService ersUserService;
 
-    public ErsUserController(ErsUserService ersUserService,
-                             AuthenticationManager authenticationManager,
-                             JwtTokenUtil jwtTokenUtil,
-                             JwtUserDetailsService userDetailsService) {
+    public ErsUserController(ErsUserService ersUserService) {
 
         this.ersUserService = ersUserService;
 

@@ -1,6 +1,8 @@
 package com.vertigo.controllers;
 
 import com.vertigo.models.ErsReimbursement;
+import com.vertigo.services.ErsReimbursementService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,6 +17,16 @@ import java.util.List;
 @RequestMapping("/reimbursements")
 public class ErsReimbursementController {
 
+    ErsReimbursementService ersReimbursementService;
 
+    @Autowired
+    public ErsReimbursementController(ErsReimbursementService ersReimbursementService) {
+        this.ersReimbursementService = ersReimbursementService;
+    }
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ErsReimbursement> getAllReimbursements() {
+        return ersReimbursementService.getAllReimbursements();
+    }
 
 }

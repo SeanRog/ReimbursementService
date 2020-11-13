@@ -16,49 +16,47 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ErsUserService implements UserDetailsService {
+public class ErsUserService {
 
 
     private ErsUserRepository ersUserRepository;
-    private JwtUserDetailsService jwtUserDetailsService;
-    private PasswordEncoder bcryptEncoder;
+//    private JwtUserDetailsService jwtUserDetailsService;
+//    private PasswordEncoder bcryptEncoder;
 
     @Autowired
-    public ErsUserService(ErsUserRepository ersUserRepository, JwtUserDetailsService jwtUserDetailsService, PasswordEncoder bcryptEncoder) {
+    public ErsUserService(ErsUserRepository ersUserRepository) {
         this.ersUserRepository = ersUserRepository;
-        this.jwtUserDetailsService = jwtUserDetailsService;
-        this.bcryptEncoder = bcryptEncoder;
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+//    @Override
+//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+//
+//        ErsUser user = ersUserRepository.findByUsername(username);
+//        if(user == null) {
+//            throw new UsernameNotFoundException("User not found with username: " + username);
+//        }
+//        return new User(user.getUsername(), user.getPassword(), new ArrayList<>());
+//    }
+//
+//    public ErsUser save(ErsUser user) throws UsernameAlreadyExistsException {
+//
+//        ErsUser ersUser = ersUserRepository.findByUsername(user.getUsername());
+//        if(ersUser != null) {
+//            throw new UsernameAlreadyExistsException("Username is already taken");
+//        }
+//
+//        ErsUser newUser = new ErsUser();
+//        newUser.setUsername(user.getUsername());
+//        newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
+//        newUser.setFirstName(user.getFirstName());
+//        newUser.setLastName(user.getLastName());
+//        newUser.setEmail(user.getEmail());
+//        newUser.setUserRole(user.getUserRole());
+//        newUser.setActive(true);
+//        return ersUserRepository.save(newUser);
+//    }
 
-        ErsUser user = ersUserRepository.findByUsername(username);
-        if(user == null) {
-            throw new UsernameNotFoundException("User not found with username: " + username);
-        }
-        return new User(user.getUsername(), user.getPassword(), new ArrayList<>());
-    }
-
-    public ErsUser save(ErsUser user) throws UsernameAlreadyExistsException {
-
-        ErsUser ersUser = ersUserRepository.findByUsername(user.getUsername());
-        if(ersUser != null) {
-            throw new UsernameAlreadyExistsException("Username is already taken");
-        }
-
-        ErsUser newUser = new ErsUser();
-        newUser.setUsername(user.getUsername());
-        newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
-        newUser.setFirstName(user.getFirstName());
-        newUser.setLastName(user.getLastName());
-        newUser.setEmail(user.getEmail());
-        newUser.setUserRole(user.getUserRole());
-        newUser.setActive(true);
-        return ersUserRepository.save(newUser);
-    }
-
-        @Transactional
+    @Transactional
     public List<ErsUser> getAllUsers() {
         try {
 
