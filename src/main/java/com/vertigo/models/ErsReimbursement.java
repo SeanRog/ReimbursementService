@@ -27,7 +27,7 @@ public class ErsReimbursement {
     private String description;
 
     @Column(name = "reciept")
-    private double receipt;
+    private String receipt;
 
     @OneToOne
     @JoinColumn(name = "author_id")

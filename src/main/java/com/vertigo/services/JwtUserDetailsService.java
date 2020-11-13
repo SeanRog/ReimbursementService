@@ -1,5 +1,6 @@
 package com.vertigo.services;
 
+import com.vertigo.exceptions.UsernameAlreadyExistsException;
 import com.vertigo.models.ErsUser;
 import com.vertigo.repositories.ErsUserRepository;
 import com.vertigo.web.dtos.ErsUserDTO;
@@ -33,19 +34,28 @@ public class JwtUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        if ("javainuse".equals(username)) {
-            return new User("javainuse", "$2a$10$slYQmyNdGzTn7ZLBXBChFOC9f6kFjAqPhccnP6DxlWXx2lPk1C3G6",
-                    new ArrayList<>());
-        } else {
+        ErsUser user = ersUserRepository.findByUsername(username);
+        if(user == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
-
+        return new User(user.getUsername(), user.getPassword(), new ArrayList<>());
     }
 
-    public ErsUser save(ErsUserDTO user) {
+    public ErsUser save(ErsUser user) throws UsernameAlreadyExistsException{
+
+        ErsUser ersUser = ersUserRepository.findByUsername(user.getUsername());
+        if(ersUser != null) {
+            throw new UsernameAlreadyExistsException("Username is already taken");
+        }
+
         ErsUser newUser = new ErsUser();
         newUser.setUsername(user.getUsername());
         newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
+        newUser.setFirstName(user.getFirstName());
+        newUser.setLastName(user.getLastName());
+        newUser.setEmail(user.getEmail());
+        newUser.setUserRole(user.getUserRole());
+        newUser.setActive(true);
         return ersUserRepository.save(newUser);
     }
 

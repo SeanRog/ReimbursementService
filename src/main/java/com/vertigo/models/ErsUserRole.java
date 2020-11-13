@@ -14,7 +14,7 @@ public class ErsUserRole {
     @GeneratedValue(strategy = GenerationType.AUTO)
     public int id;
 
-    @Column(name = "role_name")
+    @Column(name = "role_name", unique = true)
     public String roleName;
 
 }
