@@ -3,6 +3,7 @@ package com.vertigo.models;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @Data
 @Entity
@@ -29,9 +30,14 @@ public class ErsUser {
     @Column(name = "email", unique = true, nullable = false)
     private String email;
 
-    @OneToOne
-    @JoinColumn(name = "role_id", nullable = false)
-    private ErsUserRole userRole;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "users_roles",
+        joinColumns = @JoinColumn(
+            name = "user_id", referencedColumnName = "ers_user_id"),
+        inverseJoinColumns = @JoinColumn(
+            name = "role_id", referencedColumnName = "role_id"))
+    private Collection<ErsUserRole> roles;
 
     @Column(name = "is_active")
     private boolean isActive;

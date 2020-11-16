@@ -3,6 +3,7 @@ package com.vertigo.models;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @Data
 @Entity
@@ -12,9 +13,11 @@ public class ErsUserRole {
     @Id
     @Column(name = "role_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public int id;
+    private int id;
 
-    @Column(name = "role_name", unique = true)
-    public String roleName;
+    @Column(name = "role_name")
+    private String name;
+
+
 
 }

@@ -14,10 +14,10 @@ public class ErsReimbursement {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(name = "amount")
+    @Column(name = "amount", nullable = false)
     private double amount;
 
-    @Column(name = "submitted")
+    @Column(name = "submitted", nullable = false)
     private String submitted;
 
     @Column(name = "resolved")
@@ -26,11 +26,11 @@ public class ErsReimbursement {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "reciept")
+    @Column(name = "receipt")
     private String receipt;
 
     @OneToOne
-    @JoinColumn(name = "author_id")
+    @JoinColumn(name = "author_id", nullable = false)
     private ErsUser author;
 
     @OneToOne
@@ -38,11 +38,11 @@ public class ErsReimbursement {
     private ErsUser resolver;
 
     @OneToOne
-    @JoinColumn(name = "reimb_status_id")
+    @JoinColumn(name = "reimb_status_id", nullable = false)
     private ErsReimbursementStatus status;
 
     @OneToOne
-    @JoinColumn(name = "reimb_type_id")
+    @JoinColumn(name = "reimb_type_id", nullable = false)
     private ErsReimbursementType type;
 
 }

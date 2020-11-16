@@ -5,6 +5,7 @@ import com.vertigo.models.ErsUser;
 import com.vertigo.repositories.ErsUserRepository;
 import com.vertigo.web.dtos.ErsUserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,6 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * JWTUserDetailsService implements the Spring Security UserDetailsService interface.
@@ -34,11 +37,20 @@ public class JwtUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        ErsUser user = ersUserRepository.findByUsername(username);
-        if(user == null) {
+        ErsUser ersUser = ersUserRepository.findByUsername(username);
+        if(ersUser == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
-        return new User(user.getUsername(), user.getPassword(), new ArrayList<>());
+        return new User(ersUser.getUsername(), ersUser.getPassword(), getAuthority(ersUser));
+    }
+
+
+    private Set<SimpleGrantedAuthority> getAuthority(ErsUser ersUser) {
+        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+        ersUser.getRoles().forEach(ersUserRole -> {
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + ersUserRole.getName()));
+        });
+        return authorities;
     }
 
     public ErsUser save(ErsUser user) throws UsernameAlreadyExistsException{
@@ -54,7 +66,7 @@ public class JwtUserDetailsService implements UserDetailsService {
         newUser.setFirstName(user.getFirstName());
         newUser.setLastName(user.getLastName());
         newUser.setEmail(user.getEmail());
-        newUser.setUserRole(user.getUserRole());
+        newUser.setRoles(user.getRoles());
         newUser.setActive(true);
         return ersUserRepository.save(newUser);
     }
