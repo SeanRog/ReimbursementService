@@ -1,26 +1,23 @@
 package com.vertigo.controllers;
 
-
-import com.vertigo.exceptions.UsernameAlreadyExistsException;
 import com.vertigo.models.ErsUser;
 import com.vertigo.services.ErsUserService;
-import com.vertigo.services.JwtUserDetailsService;
-import com.vertigo.util.JwtTokenUtil;
-import com.vertigo.web.dtos.JwtRequest;
-import com.vertigo.web.dtos.JwtResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+/**
+ *
+ * This controller is used to:
+ * add a new user - (Allowed role = ADMIN)
+ * update an existing user - (Allowed role = ADMIN)
+ * soft delete a target user - (Allowed role = ADMIN)
+ *
+ */
 
 @RestController
 @CrossOrigin
@@ -29,6 +26,7 @@ public class ErsUserController {
 
     private ErsUserService ersUserService;
 
+    @Autowired
     public ErsUserController(ErsUserService ersUserService) {
 
         this.ersUserService = ersUserService;

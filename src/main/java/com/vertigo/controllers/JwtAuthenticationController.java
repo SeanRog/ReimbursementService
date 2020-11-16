@@ -4,13 +4,11 @@ import com.vertigo.exceptions.UsernameAlreadyExistsException;
 import com.vertigo.models.ErsUser;
 import com.vertigo.services.JwtUserDetailsService;
 import com.vertigo.util.JwtTokenUtil;
-import com.vertigo.web.dtos.ErsUserDTO;
 import com.vertigo.web.dtos.JwtRequest;
 import com.vertigo.web.dtos.JwtResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -18,7 +16,6 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 
 /**
@@ -69,7 +66,6 @@ public class JwtAuthenticationController {
         }
     }
 
-    //@Secured("ROLE_ADMIN")
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResponseEntity<?> registerUser(@RequestBody ErsUser user) throws Exception{
