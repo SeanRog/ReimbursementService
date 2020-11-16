@@ -12,7 +12,7 @@ public class ErsReimbursement {
     @Id
     @Column(name = "reimb_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private int id;
 
     @Column(name = "amount", nullable = false)
     private double amount;
