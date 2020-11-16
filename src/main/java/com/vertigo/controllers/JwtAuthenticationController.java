@@ -1,17 +1,24 @@
 package com.vertigo.controllers;
 
+import com.vertigo.exceptions.UsernameAlreadyExistsException;
+import com.vertigo.models.ErsUser;
 import com.vertigo.services.JwtUserDetailsService;
 import com.vertigo.util.JwtTokenUtil;
+import com.vertigo.web.dtos.ErsUserDTO;
 import com.vertigo.web.dtos.JwtRequest;
 import com.vertigo.web.dtos.JwtResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 
 /**
@@ -24,14 +31,20 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 public class JwtAuthenticationController {
 
-    @Autowired
     private AuthenticationManager authenticationManager;
-
-    @Autowired
     private JwtTokenUtil jwtTokenUtil;
+    private JwtUserDetailsService userDetailsService;
 
     @Autowired
-    private JwtUserDetailsService userDetailsService;
+    public JwtAuthenticationController(AuthenticationManager authenticationManager,
+                                       JwtTokenUtil jwtTokenUtil,
+                                       JwtUserDetailsService userDetailsService) {
+
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenUtil = jwtTokenUtil;
+        this.userDetailsService = userDetailsService;
+
+    }
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
@@ -56,9 +69,16 @@ public class JwtAuthenticationController {
         }
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public String registerUser() {
-        return "Register not implemented yet :)";
+    //@Secured("ROLE_ADMIN")
+    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public ResponseEntity<?> registerUser(@RequestBody ErsUser user) throws Exception{
+        try{
+            return ResponseEntity.ok(userDetailsService.save(user));
+        } catch(UsernameAlreadyExistsException e) {
+            return new ResponseEntity<>("Username Already Taken!", HttpStatus.CONFLICT);
+        }
+
     }
 
 }

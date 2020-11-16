@@ -14,7 +14,7 @@ public class ErsReimbursementType {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @Column(name = "reimb_type")
+    @Column(name = "reimb_type", unique = true)
     private String reimbursementType;
 
 }

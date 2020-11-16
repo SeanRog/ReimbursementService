@@ -3,6 +3,7 @@ package com.vertigo.models;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @Data
 @Entity
@@ -14,10 +15,10 @@ public class ErsUser {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(name = "username")
+    @Column(name = "username", unique = true, nullable = false)
     private String username;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
 
     @Column(name = "first_name")
@@ -26,12 +27,17 @@ public class ErsUser {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
 
-    @OneToOne
-    @JoinColumn(name = "role_id")
-    private ErsUserRole userRole;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "users_roles",
+        joinColumns = @JoinColumn(
+            name = "user_id", referencedColumnName = "ers_user_id"),
+        inverseJoinColumns = @JoinColumn(
+            name = "role_id", referencedColumnName = "role_id"))
+    private Collection<ErsUserRole> roles;
 
     @Column(name = "is_active")
     private boolean isActive;
