@@ -2,6 +2,7 @@ package com.vertigo.controllers;
 
 import com.vertigo.exceptions.ResourceNotFoundException;
 import com.vertigo.models.ErsReimbursement;
+import com.vertigo.models.ErsUser;
 import com.vertigo.services.ErsReimbursementService;
 
 import com.vertigo.services.ErsUserService;
@@ -14,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -66,7 +69,15 @@ public class ErsReimbursementController {
     @RequestMapping(value = "/authorid/{id}", method = RequestMethod.GET)
     public ResponseEntity getReimbursementByAuthorId(@PathVariable int id, Authentication authentication) {
 
-        if(ersUserService.findErsUserByUsername(authentication.getName()).getId() != id) {
+        ErsUser ersUser = ersUserService.findErsUserByUsername(authentication.getName());
+
+        boolean isManager = false;
+
+        for(GrantedAuthority auth : authentication.getAuthorities()) {
+            if(auth.getAuthority().toString().equals("ROLE_MANAGER")) isManager = true;
+        }
+
+        if(ersUser == null || ersUser.getId() != id && !isManager) {
             return new ResponseEntity("You are not authorized", HttpStatus.FORBIDDEN);
         }
 
