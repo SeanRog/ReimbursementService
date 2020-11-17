@@ -40,6 +40,36 @@ public class ErsReimbursementService {
 
     }
 
+    public List<ErsReimbursement> getReimbursementsByStatusId(int id) {
+
+        Iterable<ErsReimbursement> ersReimbursementIterable = ersReimbursementRepository.findAllByStatusId(id);
+        List<ErsReimbursement> ersReimbursementList = new ArrayList();
+        for(ErsReimbursement ersReimbursement : ersReimbursementIterable) {
+            ersReimbursementList.add(ersReimbursement);
+        }
+
+        if(ersReimbursementList.size() == 0) {
+            throw new ResourceNotFoundException("Found no reimbursements for that status");
+        }
+
+        return ersReimbursementList;
+    }
+
+    public List<ErsReimbursement> getReimbursementsByTypeId(int id) {
+
+        Iterable<ErsReimbursement> ersReimbursementIterable = ersReimbursementRepository.findAllByTypeId(id);
+        List<ErsReimbursement> ersReimbursementList = new ArrayList();
+        for(ErsReimbursement ersReimbursement : ersReimbursementIterable) {
+            ersReimbursementList.add(ersReimbursement);
+        }
+
+        if(ersReimbursementList.size() == 0) {
+            throw new ResourceNotFoundException("Found no reimbursements for that type");
+        }
+
+        return ersReimbursementList;
+    }
+
     public ErsReimbursement getReimbursementById(int id){
 
         if (id <= 0) {

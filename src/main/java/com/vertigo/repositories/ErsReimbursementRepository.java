@@ -11,4 +11,8 @@ public interface ErsReimbursementRepository extends CrudRepository<ErsReimbursem
 
     List<ErsReimbursement> findAllByAuthorId(int id);
 
+    List<ErsReimbursement> findAllByStatusId(int id);
+
+    List<ErsReimbursement> findAllByTypeId(int id);
+
 }

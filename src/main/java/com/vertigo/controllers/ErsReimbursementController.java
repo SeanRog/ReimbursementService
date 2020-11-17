@@ -86,7 +86,7 @@ public class ErsReimbursementController {
 
     }
 
-    @RequestMapping(value = "/authorid/{id}", method = RequestMethod.GET)
+    @GetMapping(value = "/authorid/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity getReimbursementByAuthorId(@PathVariable int id, Authentication authentication) {
 
         ErsUser ersUser = ersUserService.findErsUserByUsername(authentication.getName());
@@ -108,6 +108,29 @@ public class ErsReimbursementController {
         } catch(ResourceNotFoundException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
         }
+    }
+
+    @GetMapping(value = "/status/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('MANAGER')")
+    public ResponseEntity getReimbursementByStatusId(@PathVariable int id) {
+
+        try {
+            return ResponseEntity.ok(ersReimbursementService.getReimbursementsByStatusId(id));
+        } catch(ResourceNotFoundException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+
+    }
+
+    @GetMapping(value = "/type/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('MANAGER')")
+    public ResponseEntity getReimbursementByTypeId(@PathVariable int id) {
+
+        try {
+            return ResponseEntity.ok(ersReimbursementService.getReimbursementsByTypeId(id));
+        } catch(ResourceNotFoundException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
 
     }
 
@@ -119,6 +142,20 @@ public class ErsReimbursementController {
             return ResponseEntity.ok(ersReimbursementService.save(ersReimbursement));
         } catch(RuntimeException e) {
             return new ResponseEntity("There was a problem creating the reimbursement " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity updateReimbursement(@RequestBody ErsReimbursement ersReimbursement, Authentication authentication) {
+
+        try{
+            ErsUser ersUser = ersUserService.findErsUserByUsername(authentication.getName());
+            if(ersReimbursement.getAuthor().getId() != ersUser.getId() || ersReimbursement.getStatus().getId() != 1){
+                return new ResponseEntity("You are not authorized to modify this resource", HttpStatus.FORBIDDEN);
+            }
+            return ResponseEntity.ok(ersReimbursementService.save(ersReimbursement));
+        } catch(RuntimeException e) {
+            return new ResponseEntity("There was a problem updating the reimbursement " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
