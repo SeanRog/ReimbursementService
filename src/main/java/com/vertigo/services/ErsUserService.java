@@ -50,4 +50,11 @@ public class ErsUserService {
 
     }
 
+    @Transactional
+    public ErsUser updateUser(ErsUser updatedErsUser) {
+
+        return ersUserRepository.save(updatedErsUser);
+
+    }
+
 }
