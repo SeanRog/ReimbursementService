@@ -1,5 +1,6 @@
 package com.vertigo.controllers;
 
+import com.vertigo.exceptions.InvalidRequestException;
 import com.vertigo.exceptions.ResourceNotFoundException;
 import com.vertigo.models.ErsReimbursement;
 import com.vertigo.models.ErsUser;
@@ -47,21 +48,40 @@ public class ErsReimbursementController {
         this.ersUserService = ersUserService;
     }
 
-//    @PreAuthorize("hasRole('MANAGER')")
-    @Secured(value = {"ROLE_MANAGER"})
+    @PreAuthorize("hasRole('MANAGER')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ErsReimbursement> getAllReimbursements() {
         return ersReimbursementService.getAllReimbursements();
     }
 
-    @PreAuthorize("hasRole('MANAGER')")
+
     @GetMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getReimbursementById(@PathVariable int id) {
+    public ResponseEntity<?> getReimbursementById(@PathVariable int id, Authentication authentication) {
 
         try {
+
+            ErsReimbursement ersReimbursement;
+            ersReimbursement = ersReimbursementService.getReimbursementById(id);
+            ErsUser currentUser = ersUserService.findErsUserByUsername(authentication.getName());
+            boolean isManager = false;
+            for(GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
+                if(grantedAuthority.getAuthority().toString().equals("ROLE_MANAGER")) isManager = true;
+            }
+
+            if(currentUser == null || ersReimbursement == null || ersReimbursement.getAuthor().getId() != currentUser.getId() && !isManager) {
+                return new ResponseEntity<>("Forbidden", HttpStatus.FORBIDDEN);
+            }
+
             return ResponseEntity.ok(ersReimbursementService.getReimbursementById(id));
+
         } catch(ResourceNotFoundException e) {
+
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+
+        } catch(InvalidRequestException e) {
+
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+
         }
 
     }
