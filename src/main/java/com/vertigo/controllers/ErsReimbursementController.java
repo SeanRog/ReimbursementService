@@ -111,4 +111,15 @@ public class ErsReimbursementController {
 
     }
 
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity createReimbursement(@RequestBody ErsReimbursement ersReimbursement, Authentication authentication) {
+        try{
+            ErsUser ersUser = ersUserService.findErsUserByUsername(authentication.getName());
+            ersReimbursement.setAuthor(ersUser);
+            return ResponseEntity.ok(ersReimbursementService.save(ersReimbursement));
+        } catch(RuntimeException e) {
+            return new ResponseEntity("There was a problem creating the reimbursement " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

@@ -73,4 +73,11 @@ public class ErsReimbursementService {
 
     }
 
+    public ErsReimbursement save(ErsReimbursement ersReimbursement) {
+
+        ersReimbursement.setSubmitted(java.time.LocalDateTime.now().toString());
+
+        return ersReimbursementRepository.save(ersReimbursement);
+    }
+
 }
