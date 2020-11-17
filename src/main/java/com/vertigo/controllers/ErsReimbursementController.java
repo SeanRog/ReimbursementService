@@ -4,11 +4,16 @@ import com.vertigo.exceptions.ResourceNotFoundException;
 import com.vertigo.models.ErsReimbursement;
 import com.vertigo.services.ErsReimbursementService;
 
+import com.vertigo.services.ErsUserService;
+import com.vertigo.services.JwtUserDetailsService;
+import com.vertigo.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,13 +36,16 @@ import java.util.List;
 public class ErsReimbursementController {
 
     ErsReimbursementService ersReimbursementService;
+    ErsUserService ersUserService;
 
     @Autowired
-    public ErsReimbursementController(ErsReimbursementService ersReimbursementService) {
+    public ErsReimbursementController(ErsReimbursementService ersReimbursementService, ErsUserService ersUserService) {
         this.ersReimbursementService = ersReimbursementService;
+        this.ersUserService = ersUserService;
     }
 
-    @PreAuthorize("hasRole('MANAGER')")
+//    @PreAuthorize("hasRole('MANAGER')")
+    @Secured(value = {"ROLE_MANAGER"})
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ErsReimbursement> getAllReimbursements() {
         return ersReimbursementService.getAllReimbursements();
@@ -55,11 +63,17 @@ public class ErsReimbursementController {
 
     }
 
-    @GetMapping(value = "/authorid/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity getReimbursementByUsername(@PathVariable int id) {
+    @RequestMapping(value = "/authorid/{id}", method = RequestMethod.GET)
+    public ResponseEntity getReimbursementByAuthorId(@PathVariable int id, Authentication authentication) {
+
+        if(ersUserService.findErsUserByUsername(authentication.getName()).getId() != id) {
+            return new ResponseEntity("You are not authorized", HttpStatus.FORBIDDEN);
+        }
 
         try{
+
             return ResponseEntity.ok(ersReimbursementService.findAllByAuthorId(id));
+
         } catch(ResourceNotFoundException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
         }

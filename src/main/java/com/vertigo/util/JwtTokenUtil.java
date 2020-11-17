@@ -1,8 +1,10 @@
 package com.vertigo.util;
 
+import com.vertigo.repositories.ErsUserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -24,13 +26,26 @@ public class JwtTokenUtil implements Serializable {
 
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
+    ErsUserRepository ersUserRepository;
+
     @Value("${jwt.secret}")
     private String secret;
+
+    public JwtTokenUtil() {
+
+    }
+
+    @Autowired
+    public JwtTokenUtil(ErsUserRepository ersUserRepository) {
+        this.ersUserRepository = ersUserRepository;
+    }
 
     //retrieve username from jwt token
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
     }
+
+    public String getIdFromToken(String token) { return getClaimFromToken(token, Claims::getId); }
 
     //retrieve expiration date from jwt token
     public Date getExpirationDateFromToken(String token) {
@@ -66,7 +81,9 @@ public class JwtTokenUtil implements Serializable {
     //   compaction of the JWT to a URL-safe string
     private String doGenerateToken(Map<String, Object> claims, String subject) {
 
-        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
+        String id = Integer.toString(ersUserRepository.findByUsername(subject).getId());
+
+        return Jwts.builder().setClaims(claims).setSubject(subject).setId(id).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
 
