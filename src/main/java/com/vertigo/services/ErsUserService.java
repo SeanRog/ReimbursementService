@@ -57,4 +57,14 @@ public class ErsUserService {
 
     }
 
+    @Transactional
+    public ErsUser deleteUser(String username) {
+
+        ErsUser ersUser = ersUserRepository.findByUsername(username);
+        ersUser.setActive(false);
+        ersUserRepository.save(ersUser);
+        return ersUser;
+
+    }
+
 }

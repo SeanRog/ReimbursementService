@@ -45,10 +45,23 @@ public class ErsUserController {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updateUser(@RequestBody ErsUser ersUser) {
+
         try {
             return ResponseEntity.ok(ersUserService.updateUser(ersUser));
         } catch (Exception e) {
             return new ResponseEntity("There was a problem with updating the user.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping(consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity deleteUser(@RequestBody String username) {
+
+        try {
+            return ResponseEntity.ok(ersUserService.deleteUser(username));
+        } catch (Exception e) {
+            return new ResponseEntity("There was a problem with deleting the user.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
