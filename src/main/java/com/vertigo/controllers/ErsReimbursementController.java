@@ -146,14 +146,32 @@ public class ErsReimbursementController {
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity updateReimbursement(@RequestBody ErsReimbursement ersReimbursement, Authentication authentication) {
+    public ResponseEntity updateReimbursement(@RequestBody ErsReimbursement changedErsReimbursement, Authentication authentication) {
+
+        ErsReimbursement oldErsReimbursement = ersReimbursementService.getReimbursementById(changedErsReimbursement.getId());
 
         try{
             ErsUser ersUser = ersUserService.findErsUserByUsername(authentication.getName());
-            if(ersReimbursement.getAuthor().getId() != ersUser.getId() || ersReimbursement.getStatus().getId() != 1){
+
+            boolean isManager = false;
+
+            for(GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
+                if(grantedAuthority.getAuthority().equals("ROLE_MANAGER")) isManager = true;
+            }
+
+            if(oldErsReimbursement.getStatus().getId() == 1 && isManager) {
+                return ResponseEntity.ok(ersReimbursementService.save(changedErsReimbursement));
+            }
+
+            if(oldErsReimbursement.getAuthor().getId() != ersUser.getId() || oldErsReimbursement.getStatus().getId() != 1){
                 return new ResponseEntity("You are not authorized to modify this resource", HttpStatus.FORBIDDEN);
             }
-            return ResponseEntity.ok(ersReimbursementService.save(ersReimbursement));
+
+            if(changedErsReimbursement.getStatus().getId() != 1) {
+                return new ResponseEntity("You are not authorized to approve or deny", HttpStatus.BAD_REQUEST);
+            }
+
+            return ResponseEntity.ok(ersReimbursementService.save(changedErsReimbursement));
         } catch(RuntimeException e) {
             return new ResponseEntity("There was a problem updating the reimbursement " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
